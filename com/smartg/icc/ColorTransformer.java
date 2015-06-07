@@ -30,7 +30,7 @@
 
 package com.smartg.icc;
 
-import com.imagero.color.ColorMatrix;
+import com.smartg.color.ColorMatrix;
 import com.smartg.icc.tag.Tag.ICurve;
 
 public abstract class ColorTransformer {

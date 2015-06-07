@@ -33,7 +33,7 @@ import java.awt.color.ColorSpace;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.imagero.color.ReferenceWhite;
+import com.smartg.color.ReferenceWhite;
 
 public class ICC_BasedCS extends ColorSpace {
 
