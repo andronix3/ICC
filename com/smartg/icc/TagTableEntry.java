@@ -58,7 +58,10 @@ class TagTableEntry {
 
     @Override
     public String toString() {
-	return tagType.getDescription() + " offset=" + offset + " Size=" + size;
+	if (tagType != null) {
+	    return tagType.getDescription() + " offset=" + offset + " Size=" + size;
+	}
+	return "unknown, offset=" + offset + " Size=" + size;
     }
 
     Tag getTag() {

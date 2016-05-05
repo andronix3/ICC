@@ -32,6 +32,8 @@ package com.smartg.icc.tag;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.CharBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,6 +47,7 @@ import com.smartg.icc.tag.Tag.ColorantOrder;
 import com.smartg.icc.tag.Tag.ColorantTable;
 import com.smartg.icc.tag.Tag.Data;
 import com.smartg.icc.tag.Tag.DateTime;
+import com.smartg.icc.tag.Tag.Desc;
 import com.smartg.icc.tag.Tag.ICurve;
 import com.smartg.icc.tag.Tag.Lut;
 import com.smartg.icc.tag.Tag.LutAtoB;
@@ -510,21 +513,33 @@ public abstract class TagReader {
 	    MultiLocalizedUnicode res = new MultiLocalizedUnicode(tagType);
 	    res.setReserved(IOutils.readUnsignedIntBE(in));
 	    res.numberOfNames = IOutils.readIntBE(in);
-	    res.nameRecordSize = IOutils.readUnsignedIntBE(in);
+	    res.nameRecordSize = IOutils.readUnsignedIntBE(in) & 0xFF;
 
 	    res.nameLanguageCode = new int[res.numberOfNames];
 	    res.nameCountryCode = new int[res.numberOfNames];
-	    res.nameLength = new int[res.numberOfNames];
+	    res.nameLength = new long[res.numberOfNames];
 	    res.nameOffset = new long[res.numberOfNames];
 	    res.names = new String[res.numberOfNames];
 
 	    for (int i = 0; i < res.numberOfNames; i++) {
 		res.nameLanguageCode[i] = IOutils.readShortBE(in);
 		res.nameCountryCode[i] = IOutils.readShortBE(in);
-		res.nameLength[i] = IOutils.readIntBE(in);
+		res.nameLength[i] = IOutils.readUnsignedIntBE(in);
 		res.nameOffset[i] = IOutils.readUnsignedIntBE(in);
 	    }
-	    // todo read strings
+	    for (int i = 0; i < res.numberOfNames; i++) {
+		byte[] data = new byte[(int) res.nameLength[i]];
+		IOutils.readFully(in, data);
+		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(data), "UTF-16");
+		CharBuffer cBuffer = CharBuffer.allocate(data.length);
+		while (reader.ready()) {
+		    reader.read(cBuffer);
+		}
+		cBuffer.flip();
+		res.names[i] = cBuffer.toString();
+		// res.names[i] =
+	    }
+	    // TODO read strings
 	    return res;
 	}
     }
@@ -634,6 +649,24 @@ public abstract class TagReader {
 	    return res;
 	}
     }
+    
+    static class DescReader extends TagReader {
+
+	DescReader() {
+	    super(TagType.TEXT_TYPE);
+	}
+
+	@Override
+	public Tag read(int length, InputStream in) throws IOException {
+	    Desc res = new Desc(tagType);
+	    res.setReserved(IOutils.readUnsignedIntBE(in));
+	    res.size = IOutils.readUnsignedIntBE(in);
+	    res.string = new byte[(int) res.getSize()];
+	    IOutils.readFully(in, res.string);
+	    return res;
+	}
+    }
+
 
     static class UInt16ArrayReader extends TagReader {
 

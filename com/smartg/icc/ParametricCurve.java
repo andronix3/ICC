@@ -31,8 +31,8 @@
 package com.smartg.icc;
 
 import com.smartg.icc.tag.Tag;
-import com.smartg.icc.tag.TagType;
 import com.smartg.icc.tag.Tag.ICurve;
+import com.smartg.icc.tag.TagType;
 
 public class ParametricCurve extends Tag implements ICurve {
     private int functionType;

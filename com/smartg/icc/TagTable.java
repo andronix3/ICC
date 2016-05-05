@@ -89,10 +89,15 @@ class TagTable {
 	return null;
     }
 
+    private static final boolean debug = false;
+    
     void readTags(RandomAccessInput rai) throws IOException {
 	Enumeration<TagTableEntry> tags = tags();
 	while (tags.hasMoreElements()) {
 	    TagTableEntry next = tags.nextElement();
+	    if(debug) {
+		System.out.println(next);
+	    }
 	    InputStream in0 = rai.createInputStream(next.getOffset(), next.getSize());
 	    long sig = IOutils.readUnsignedIntBE(in0);
 	    TagType tagType = TagType.create(sig);

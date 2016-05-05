@@ -627,7 +627,7 @@ public abstract class Tag {
 	long nameRecordSize;
 	int[] nameLanguageCode;
 	int[] nameCountryCode;
-	int[] nameLength;
+	long[] nameLength;
 	long[] nameOffset;
 	String[] names;
 
@@ -660,7 +660,7 @@ public abstract class Tag {
 	    return nameCountryCode;
 	}
 
-	public int[] getNameLength() {
+	public long[] getNameLength() {
 	    return nameLength;
 	}
 
@@ -1081,4 +1081,32 @@ public abstract class Tag {
 	    return string;
 	}
     }
+
+    public static class Desc extends Tag {
+
+	byte[] string;
+	long size;
+
+	protected Desc(TagType tagType) {
+	    super(tagType);
+	}
+
+	@Override
+	public String toString() {
+	    StringBuffer sb = new StringBuffer();
+	    sb.append("Text {\n");
+	    sb.append(new String(string));
+	    sb.append("\n}");
+	    return sb.toString();
+	}
+
+	public byte[] getString() {
+	    return string;
+	}
+
+	public long getSize() {
+	    return size;
+	}
+    }
+
 }
